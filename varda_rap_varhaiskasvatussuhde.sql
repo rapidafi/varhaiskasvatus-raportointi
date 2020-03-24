@@ -1,0 +1,44 @@
+create or replace view varda_rap_varhaiskasvatussuhde as
+select
+(select organisaatio_oid from varda_toimipaikka where varda_toimipaikka.id = varda_varhaiskasvatussuhde.toimipaikka_id) as toimipaikka_oid
+,varda_varhaiskasvatuspaatos.hakemus_pvm
+,varda_varhaiskasvatussuhde.alkamis_pvm
+,varda_varhaiskasvatussuhde.paattymis_pvm
+,varda_varhaiskasvatuspaatos.jarjestamismuoto_koodi
+,varda_varhaiskasvatuspaatos.kokopaivainen_vaka_kytkin
+,varda_varhaiskasvatuspaatos.paivittainen_vaka_kytkin
+,varda_varhaiskasvatuspaatos.pikakasittely_kytkin
+,varda_varhaiskasvatuspaatos.tuntimaara_viikossa
+,varda_varhaiskasvatuspaatos.vuorohoito_kytkin
+,varda_henkilo.henkilo_oid
+,varda_henkilo.syntyma_pvm
+,varda_henkilo.sukupuoli_koodi
+,varda_henkilo.aidinkieli_koodi
+,varda_henkilo.katuosoite
+,varda_henkilo.kotikunta_koodi
+,varda_henkilo.postinumero
+,varda_henkilo.postitoimipaikka
+,sum(case when exists (select 1 from varda_huoltajuussuhde where lapsi_id = varda_lapsi.id) then 1 else 0 end) as huoltajien_lkm
+from varda_varhaiskasvatussuhde
+join varda_varhaiskasvatuspaatos on varda_varhaiskasvatuspaatos.id = varda_varhaiskasvatussuhde.varhaiskasvatuspaatos_id
+join varda_lapsi on varda_lapsi.id = varda_varhaiskasvatuspaatos.lapsi_id 
+join varda_henkilo on varda_henkilo.id = varda_lapsi.henkilo_id
+group by
+varda_varhaiskasvatussuhde.toimipaikka_id
+,varda_varhaiskasvatuspaatos.hakemus_pvm
+,varda_varhaiskasvatussuhde.alkamis_pvm
+,varda_varhaiskasvatussuhde.paattymis_pvm
+,varda_varhaiskasvatuspaatos.jarjestamismuoto_koodi
+,varda_varhaiskasvatuspaatos.kokopaivainen_vaka_kytkin
+,varda_varhaiskasvatuspaatos.paivittainen_vaka_kytkin
+,varda_varhaiskasvatuspaatos.pikakasittely_kytkin
+,varda_varhaiskasvatuspaatos.tuntimaara_viikossa
+,varda_varhaiskasvatuspaatos.vuorohoito_kytkin
+,varda_henkilo.henkilo_oid
+,varda_henkilo.syntyma_pvm
+,varda_henkilo.sukupuoli_koodi
+,varda_henkilo.aidinkieli_koodi
+,varda_henkilo.katuosoite
+,varda_henkilo.kotikunta_koodi
+,varda_henkilo.postinumero
+,varda_henkilo.postitoimipaikka
